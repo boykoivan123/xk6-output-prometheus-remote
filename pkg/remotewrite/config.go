@@ -65,9 +65,8 @@ func (conf Config) ConstructRemoteConfig() (*remote.ClientConfig, error) {
 	}
 
 	// if insecureSkipTLSVerify is switched off, use the certificate file
-	if !conf.InsecureSkipTLSVerify.Bool {
-		httpConfig.TLSConfig.CAFile = conf.CACert.String
-	}
+
+	httpConfig.TLSConfig.CAFile = conf.CACert.String
 
 	// if at least valid user was configured, use basic auth
 	if conf.User.Valid {
