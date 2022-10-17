@@ -30,6 +30,8 @@ type Config struct {
 
 	InsecureSkipTLSVerify null.Bool   `json:"insecureSkipTLSVerify" envconfig:"K6_PROMETHEUS_INSECURE_SKIP_TLS_VERIFY"`
 	CACert                null.String `json:"caCertFile" envconfig:"K6_CA_CERT_FILE"`
+	CertFile              null.String `json:"certFile" envconfig:"K6_CERT_FILE"`
+	KeyFile               null.String `json:"keyFile" envconfig:"K6_KEY_FILE"`
 
 	User     null.String `json:"user" envconfig:"K6_PROMETHEUS_USER"`
 	Password null.String `json:"password" envconfig:"K6_PROMETHEUS_PASSWORD"`
@@ -47,6 +49,8 @@ func NewConfig() Config {
 		Url:                   null.StringFrom("http://localhost:9090/api/v1/write"),
 		InsecureSkipTLSVerify: null.BoolFrom(true),
 		CACert:                null.NewString("", false),
+		CertFile:              null.NewString("", false),
+		KeyFile:               null.NewString("", false),
 		User:                  null.NewString("", false),
 		Password:              null.NewString("", false),
 		FlushPeriod:           types.NullDurationFrom(defaultFlushPeriod),
@@ -67,6 +71,8 @@ func (conf Config) ConstructRemoteConfig() (*remote.ClientConfig, error) {
 	// if insecureSkipTLSVerify is switched off, use the certificate file
 
 	httpConfig.TLSConfig.CAFile = conf.CACert.String
+	httpConfig.TLSConfig.CertFile = conf.CertFile.String
+	httpConfig.TLSConfig.KeyFile = conf.KeyFile.String
 
 	// if at least valid user was configured, use basic auth
 	if conf.User.Valid {
